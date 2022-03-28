@@ -1,0 +1,81 @@
+This is my original loose architecture doc, written up before the three core structs were written up
+
+basic application should:
+    Be a basic add / read / modify / delete system
+
+    posts should have the following components:
+        1. text (should contain all text data, probably unicode?)
+        1a. post owner (unicode? text name)
+        2. attachment (should be a single file, probably containing the name of the file, followed by the actual file?)
+        3. creation time stamp
+        4. modification time stamp
+        5. deletion status
+        6. parent thread
+
+    boards should have the following components:
+        1. description (probably unicode?)
+        2. thread collection (probably folders)
+        3. posts collection (probably folders)
+        4. configuration (total allowed threads, allowed active threads, etc)
+        5. active thread list
+        6. sticky thread list
+        7. name
+
+    board configuration:
+        total active threads (sticky + bumped) (if more stickied than total allowed, stop after n sticky entries)
+        total archive threads (total amount of threads allowed to be locked, and still in storage)
+
+    threads should:
+        1. Contain a name / description
+        2. contain a parent post ID
+        3. contain a list of all child posts (probably sorted)
+        4. lock status
+
+    site:
+        top level
+        should probably contain a landing page
+        contain links to all the boards
+        should also probably contain a site config
+
+    site config:
+        board list
+        default config for boards
+        global mod cookies (not a priority)
+
+Storage solution:
+    // ; -- \r\n unless otherwise noted
+
+    File system:
+        We could also do this with a database, but unless we're doing this on super-large scale, there's no real concern of exceeding an inode limit
+        There is also less work involved with a file system overall, and places a good chunk of the work with the OS rather than needing to manage a DB
+
+    posts:
+        text -- any text data in the post. Stored as unicode.
+        attachment -- filename;file_data -- string;bytes (maybe base64?)
+        owner -- IP;cookie;name; -- ipv4/v6;string;string;
+        meta -- creation;modification;deleted; -- unixmilli;unixmilli;bool;
+        ID -- folder name as a # (BASE36)
+        parent -- thread ID; (BASE36)
+
+    boards:
+        name -- short string, of a few characters
+        description -- short text snippet of the board
+        posts -- table / map of posts
+        threads -- list of threads
+        configuration -- folder where configuration files per board are
+        active -- list of active threads
+        sticky -- list of stickied threads
+
+
+    threads:
+        about -- name;description; string;string;
+        posts -- child;posts;after; post#;post#;post#;...;
+        meta -- text file: lock; -- bool;
+        ID -- folder name as a # (BASE36) (identical to parent post)
+
+    board config:
+        thread_count -- active;archive; -- 8bit int;8bit int;
+
+    site config:
+        default_thread_count -- active;archive; -- 8bit int;8bit int;
+        board_list -- name;name;name;...;name;
