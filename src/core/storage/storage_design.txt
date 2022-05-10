@@ -1,0 +1,44 @@
+overall for storage, we want the design to be flexible enough such that it would be reasonable to just swap out the
+file_system module for a database module with very minimal amounts of modification. Primarily just changing a module
+name, and potentially a couple import statements
+
+to accomplish this, we need to describe some level of how our basic file_system or other interface equivalent module would operate
+
+To better understand what *those* requirements are though, we should first attempt to describe what the storage module's duties and operations should be
+
+In particular, it should:
+    1. initialize storage system
+       - initialization should be more than ensuring a db connection is available or a directory is rw'able
+       - a. should validate that the required structures/tables/folder layout/etc is setup according to spec
+       - b. if anything is missing at any point, it should be constructed.
+       - c. the system should then do *some* level of checking permissions, though the depth and level of this should
+            probably be minimal due to the fact that the storage construct should never be exposed
+            that is, if something goes wrong with permissions your bets should 100% be that it's a sysadmin's fault
+            (or failing hardware, I guess)
+
+    2. loading structures into memory
+        - after initialization, (or perhaps during a more generalized system initialization), we should then load
+          our basic structures into memory
+        - This should load our "essential" data objects into memory, essential being
+        - a. what we can reasonably fit into the computer's memory
+        - b. anything that might be loaded frequently
+        - this probably means: board struct, active&sticky threads, parent posts for each thread
+        -- side note: we probably want to remove attachment storage from the post structure to save on ram
+
+    3. Read structures
+        - be able to read a struct from structs into memory fully give basic parameters.
+        - for boards this should probably be from a generic configuration file
+        - otherwise we should have the requisite data from files and board struct
+
+    4. write structures
+        - be able to write structures from memory given a pointer to them
+        - should create a new version of the structure if it doesn't exist
+        - otherwise should overwrite the existing one
+
+    5. modify structures(?)
+        - might be optional? Would be extra code, but technically feasible
+        - could be used to overwrite only a certain part of a particular structure
+          ex: only overwrite the active posts list
+        - should probably include because re-writing every component of any structure would be a lot of overhead
+          just because one little thing changed, and should be partially implemented of fully at the lower level anyways
+

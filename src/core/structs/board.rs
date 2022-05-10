@@ -4,7 +4,7 @@ use std::string::String;
 use std::collections::VecDeque;
 use std::fmt::Formatter;
 
-pub(crate) struct Board{
+pub(crate) struct Board {
     name: String,
     description: String,
     posts: HashSet<u64>,   // should this be in memory?
@@ -96,6 +96,10 @@ impl Board {
     }
 
     pub fn add_post(mut self) -> u64 {
+        // A more sophisticated distributed implementation would fetch/check count from storage
+        // for such an implementation, this function should include a post # input param
+        // which is bounds checked, and then checked if it already exists within the structure.
+        // The panic should be substituted for a exception in this case
         self.count += 1;
         let check: bool = self.posts.insert(self.count);
 
