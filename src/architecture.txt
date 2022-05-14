@@ -39,7 +39,7 @@ basic application should:
 
     site config:
         board list
-        default config for boards
+        default config for boards --> changed to being defined in code
         global mod cookies (not a priority)
 
 Storage solution:

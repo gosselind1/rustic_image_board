@@ -1,7 +1,7 @@
 use std::borrow::BorrowMut;
 use std::collections::HashSet;
 use std::string::String;
-use std::collections::VecDeque;
+use std::collections::vec_deque::VecDeque;
 use std::fmt::Formatter;
 
 pub(crate) struct Board {
@@ -127,7 +127,7 @@ impl Board {
     fn queue_thread(thread_list: &mut VecDeque<u64>, uid: String, thread_id: u64) -> Result<(), ThreadListFullError> {
         let size: usize = thread_list.capacity();
         let len: usize = thread_list.len();
-;
+
         if len > size { // THIS SHOULD NEVER HAPPEN
             panic!("Thread count exceeded set size.");
         } else if  len == size {
