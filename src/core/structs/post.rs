@@ -1,11 +1,10 @@
-use bytes::Bytes;
 use std::string::String;
 use std::time::Instant;
 
 pub(crate) struct Post {
     owner: String,
     text: String,
-    attachment: Bytes,
+    attachment: &'static [u8],
     created: Instant,  // unix milli
     modified: Instant, // unix milli
     deleted: bool,
@@ -13,7 +12,7 @@ pub(crate) struct Post {
 }
 
 impl Post {
-    pub fn new(owner: String, text: String, attachment: Bytes, parent: u64) -> Post {
+    pub fn new(owner: String, text: String, attachment: &'static [u8], parent: u64) -> Post {
         let created: Instant = Instant::now();
         let modified: Instant = created;
 
@@ -38,7 +37,7 @@ impl Post {
         return &self.text;
     }
 
-    pub fn get_attachment(&self) -> &Bytes {
+    pub fn get_attachment(&self) -> &'static [u8] {
         return &self.attachment;
     }
 
@@ -71,7 +70,7 @@ impl Post {
 
     pub fn remove_attachment(&mut self) {
         self.modification();
-        self.attachment = Bytes::new();
+        self.attachment = b"";
     }
 
     pub fn delete(&mut self) {
@@ -92,15 +91,14 @@ impl Post {
 
 #[cfg(test)]
 mod tests {
-    use crate::core::structs;
-
     use super::*;
     const OWNER: &str = "me";
     const TEXT: &str = "Yeeting on em";
-    const FILE: Bytes = Bytes::from_static(b"file.png");
+    const FILE: &'static [u8] = b"file.png";
+    const ID: u64 = 0;
 
     fn struct_init() -> Post {
-        let a_post = Post::new(OWNER.to_string(), TEXT.to_string(), FILE, 0);
+        let a_post = Post::new(OWNER.to_string(), TEXT.to_string(), FILE, ID);
         return a_post;
     }
 
@@ -123,7 +121,7 @@ mod tests {
         assert!(delta.as_micros() < 1000);
         assert_eq!(a.created, a.modified);
         assert!(!a.deleted);
-        assert_eq!(a.parent, 0);
+        assert_eq!(a.parent, ID);
     }
 
     #[test]
@@ -148,7 +146,7 @@ mod tests {
     #[test]
     fn test_get_attachment() {
         let a = &struct_init();
-        assert_eq!(a.attachment, *a.get_attachment());
+        assert_eq!(a.attachment, a.get_attachment());
     }
 
     #[test]
@@ -200,7 +198,7 @@ mod tests {
         let a = &mut struct_init();
 
         a.remove_attachment();
-        assert_eq!(*a.get_attachment(), Bytes::new());
+        assert_eq!(a.get_attachment(), b"");
         assert!(a.get_created().lt(a.get_modified()));
     }
 

@@ -1,10 +1,10 @@
 use std::string::String;
 use std::vec::Vec;
 
-pub(crate) struct Thread{
+pub(crate) struct Thread {
     name: String,
-    parent: u64,  // thread ID #
-    children: std::vec::Vec<u64>,  // thread IDs
+    parent: u64,        // thread ID #
+    children: Vec<u64>, // thread IDs
     locked: bool,
     deleted: bool, // could be considered redundant with post's deleted, but this will simplify things
 }
@@ -16,7 +16,7 @@ impl Thread {
             parent,
             children: Vec::new(),
             locked: false,
-            deleted: false
+            deleted: false,
         };
 
         return new_thread;
@@ -65,4 +65,9 @@ impl Thread {
     pub fn undelete(mut self) {
         self.deleted = false;
     }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
 }
