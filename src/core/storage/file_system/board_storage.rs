@@ -1,9 +1,10 @@
-use std::collections::HashMap;
+use super::common;
 use super::structs;
-use std::fs::{File, create_dir};
+use std::collections::HashMap;
+use std::fs::{create_dir, File};
+use std::io::Error;
 use std::io::{Read, Write};
 use std::path::Path;
-use super::common;
 
 const CONFIG_FILE: &str = "config.txt";
 
@@ -28,7 +29,7 @@ pub(crate) fn initialize(board_path: &Path) -> Result<(), E> {
     return Ok(());
 }
 
-pub(self) fn generate_config(config_path: &Path) -> Result<(), E> {
+pub(self) fn generate_config(config_path: &Path) -> Result<()> {
     // based on architecture notes, we should have the following values in the config file:
     // 1. Board description (board name is handled by folder name)
     // 2. Total number of active threads
