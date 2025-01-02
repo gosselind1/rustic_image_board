@@ -92,6 +92,7 @@ impl Post {
 #[cfg(test)]
 mod tests {
     use super::*;
+
     const OWNER: &str = "me";
     const TEXT: &str = "Yeeting on em";
     const FILE: &'static [u8] = b"file.png";
