@@ -1,4 +1,3 @@
-use std::ops::Index;
 use std::string::String;
 use std::vec::Vec;
 
@@ -26,7 +25,7 @@ impl Thread {
     }
 
     pub fn get_parent(&self) -> u64 {
-        return *self.children.index(0);
+        return *self.children.get(0).unwrap();
     }
 
     pub fn get_children(&self) -> &Vec<u64> {
@@ -96,7 +95,7 @@ mod tests {
 
         assert_eq!(a.name, NAME);
         assert_eq!(a.children.len(), 1);
-        assert_eq!(*a.children.index(0), PARENT);
+        assert_eq!(*a.children.get(0).unwrap(), PARENT);
         assert!(!a.locked);
         assert!(!a.deleted);
     }
@@ -117,7 +116,7 @@ mod tests {
     fn test_get_children() {
         let a = struct_init();
         assert_eq!(a.get_children().len(), 1);
-        assert_eq!(*a.get_children().index(0), PARENT);
+        assert_eq!(*a.get_children().get(0).unwrap(), PARENT);
     }
 
     #[test]
@@ -146,7 +145,7 @@ mod tests {
         let mut a = struct_init();
         let size: usize = 42;
         assert_eq!(a.get_children().len(), 1);
-        assert_eq!(*a.get_children().index(0), PARENT);
+        assert_eq!(*a.get_children().get(0).unwrap(), PARENT);
 
         for i in 1..size {
             a.add_child(PARENT + i as u64);
@@ -154,7 +153,7 @@ mod tests {
         }
 
         for i in 0..size {
-            assert_eq!(*a.get_children().index(i), PARENT + i as u64);
+            assert_eq!(*a.get_children().get(i).unwrap(), PARENT + i as u64);
         }
     }
 
