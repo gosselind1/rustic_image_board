@@ -4,7 +4,7 @@ use std::time::Instant;
 pub(crate) struct Post {
     owner: String,
     text: String,
-    attachment: &'static [u8],
+    attachment: &[u8],
     created: Instant,  // unix milli
     modified: Instant, // unix milli
     deleted: bool,
@@ -12,7 +12,7 @@ pub(crate) struct Post {
 }
 
 impl Post {
-    pub fn new(owner: String, text: String, attachment: &'static [u8], parent: u64) -> Post {
+    pub fn new(owner: String, text: String, attachment: &[u8], parent: u64) -> Post {
         let created: Instant = Instant::now();
         let modified: Instant = created;
 
